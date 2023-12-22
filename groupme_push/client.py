@@ -10,7 +10,6 @@ import websocket
 import base36
 import requests
 
-
 class PushClient:
     def __init__(
         self,
@@ -21,7 +20,8 @@ class PushClient:
         on_favorite=None,
         on_other=None,
         disregard_self=False,
-        reconnect=None
+        reconnect=None,
+        exception_callback=None
     ):
         self.id = 1
         self.access_token = access_token
@@ -32,6 +32,7 @@ class PushClient:
         self.other_callback = on_other
         self.disregard_self = disregard_self
         self.reconnect=None
+        self.exception_callback = exception_callback
     
 
     def start(self):
@@ -64,8 +65,13 @@ class PushClient:
             self.thread = Thread(target=self.run_forever)
             self.thread.start()
         except Exception as e:
-            logger.error("Unhandled exception:")
-            logger.error(e, exc_info=True)
+            if self.exception_callback:
+                self.exception_callback(e)
+            else:
+                logger.error("Unhandled exception:")
+                logger.error(e, exc_info=True)
+                
+            
 
     def stop(self):
         logger.debug("Closing websocket. Bye!")
