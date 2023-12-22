@@ -21,6 +21,7 @@ class PushClient:
         on_favorite=None,
         on_other=None,
         disregard_self=False,
+        reconnect=None
     ):
         self.id = 1
         self.access_token = access_token
@@ -30,6 +31,8 @@ class PushClient:
         self.favorite_callback = on_favorite
         self.other_callback = on_other
         self.disregard_self = disregard_self
+        self.reconnect=None
+    
 
     def start(self):
         try:
@@ -76,7 +79,7 @@ class PushClient:
             on_open=self.on_open,
         )
 
-        self.ws.run_forever()
+        self.ws.run_forever(reconnect=self.reconnect)
 
     def bump_id(self):
         self.id += 1
