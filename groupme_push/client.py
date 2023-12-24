@@ -3,7 +3,6 @@ from threading import Thread
 import time
 import json
 import logging
-from queue import Queue
 
 
 logger = logging.getLogger("groupme-push")
