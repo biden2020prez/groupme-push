@@ -66,7 +66,7 @@ class PushClient:
         except Exception as e:
                 logger.error("Unhandled exception:")
                 logger.error(e, exc_info=True)
-                raise Exception("Failed to connect to GroupMe")
+                raise
 
             
 
