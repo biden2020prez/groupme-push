@@ -4,6 +4,7 @@ import time
 import json
 import logging
 
+
 logger = logging.getLogger("groupme-push")
 
 import websocket
@@ -21,7 +22,6 @@ class PushClient:
         on_other=None,
         disregard_self=False,
         reconnect=None,
-        exception_callback=None
     ):
         self.id = 1
         self.access_token = access_token
@@ -31,8 +31,7 @@ class PushClient:
         self.favorite_callback = on_favorite
         self.other_callback = on_other
         self.disregard_self = disregard_self
-        self.reconnect=None
-        self.exception_callback = exception_callback
+        self.reconnect = reconnect
     
 
     def start(self):
@@ -65,12 +64,10 @@ class PushClient:
             self.thread = Thread(target=self.run_forever)
             self.thread.start()
         except Exception as e:
-            if self.exception_callback:
-                self.exception_callback(e)
-            else:
                 logger.error("Unhandled exception:")
                 logger.error(e, exc_info=True)
-                
+                raise
+
             
 
     def stop(self):
