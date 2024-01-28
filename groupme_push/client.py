@@ -3,6 +3,8 @@ from threading import Thread
 import time
 import json
 import logging
+from functools import wraps
+
 
 
 logger = logging.getLogger("groupme-push")
@@ -32,7 +34,29 @@ class PushClient:
         self.other_callback = on_other
         self.disregard_self = disregard_self
         self.reconnect = reconnect
-    
+
+
+    def _wrap_callback(self, callback):
+        @wraps(callback)
+        def wrapper(*args, **kwargs):
+            return callback(*args, **kwargs)
+
+        return wrapper
+
+    def receive_message(self, callback):
+        self.message_callback = self._wrap_callback(callback)
+
+    def receive_dm(self, callback):
+        self.dm_callback = self._wrap_callback(callback)
+
+    def receive_like(self, callback):
+        self.like_callback = self._wrap_callback(callback)
+
+    def receive_favorite(self, callback):
+        self.favorite_callback = self._wrap_callback(callback)
+
+    def receive_other(self, callback):
+        self.other_callback = self._wrap_callback(callback)
 
     def start(self):
         try:
@@ -219,6 +243,8 @@ class PushClient:
                         json.dumps(message, indent=4)
                     )
                 )
+                self.ws.close()
+                self.start()
 
     def on_error(self, ws, error):
         logger.error("Websocket error: {}".format(error))
