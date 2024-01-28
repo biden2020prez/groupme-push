@@ -7,6 +7,7 @@ from functools import wraps
 
 
 
+
 logger = logging.getLogger("groupme-push")
 
 import websocket
@@ -35,7 +36,6 @@ class PushClient:
         self.disregard_self = disregard_self
         self.reconnect = reconnect
 
-
     def _wrap_callback(self, callback):
         @wraps(callback)
         def wrapper(*args, **kwargs):
@@ -57,6 +57,7 @@ class PushClient:
 
     def receive_other(self, callback):
         self.other_callback = self._wrap_callback(callback)
+
 
     def start(self):
         try:
